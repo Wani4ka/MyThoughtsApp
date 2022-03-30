@@ -78,6 +78,13 @@ export default (props) => {
     }
     useEffect(refresh, [page, superLogOut])
 
+    const pagination = <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onChange={setPage}
+        style={{display:'flex',justifyContent: 'center'}}
+    />
+
     return (
         <SplitLayout
             popout={popout}
@@ -95,22 +102,22 @@ export default (props) => {
                                 </PanelHeaderButton>
                             }
                         >MyThoughts</PanelHeader>
-                        <NewThoughtComponent user={props.user} onSubmit={() => {
-                            setPage(1)
-                            refresh()
-                        }} setPopout={setPopout} setActiveModal={setActiveModal} setModalText={setModalText} logOut={logOut} />
-                        {totalPages > 1 && (<Pagination
-                            currentPage={page}
-                            totalPages={totalPages}
-                            onChange={setPage}
-                            style={{display:'flex',justifyContent: 'center'}}
-                        />)}
+                        <NewThoughtComponent
+                            user={props.user}
+                            onSubmit={() => {
+                                const firstPage = page === 1
+                                setPage(1)
+                                if (firstPage) refresh()
+                            }} logOut={logOut}
+                            setPopout={setPopout} setActiveModal={setActiveModal} setModalText={setModalText} />
+                        {totalPages > 1 && pagination}
                         <Spacing size={16}/>
                         {thoughts.map((thought) => (<ThoughtComponent thought={thought} key={thought.id} />))}
                         {thoughts.length === 0 && (<Placeholder
                             header='Здесь еще нет мыслей'
                             icon={<Icon56ArticleOutline/>}
                         >Начните вести нашу общую историю, изложив свои мысли выше.</Placeholder>)}
+                        {totalPages > 1 && pagination}
                     </>}
                         <FooterComponent/>
                     </Panel>
