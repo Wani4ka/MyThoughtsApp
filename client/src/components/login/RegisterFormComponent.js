@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Button, FormStatus} from '@vkontakte/vkui'
+import {Button, Div, FormStatus} from '@vkontakte/vkui'
 import UsernameComponent, {isValidUsername} from './UsernameComponent'
 import InviteComponent from './InviteComponent'
 import PasswordComponent, {isValidPassword} from './PasswordComponent'
@@ -17,7 +17,9 @@ export default (props) => {
             <UsernameComponent value={props.username} onChange={props.setUsername}/>
             <PasswordComponent value={props.password} onChange={props.setPassword}/>
             <InviteComponent value={props.invite} onChange={props.setInvite}/>
-            <Button stretched size='l' disabled={disabled} onClick={props.onSubmit}>Зарегистрироваться</Button>
+            <Div>
+                <Button stretched size='l' disabled={disabled} onClick={props.onSubmit}>Зарегистрироваться</Button>
+            </Div>
         </>
     )
 }

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Button} from '@vkontakte/vkui'
+import {Button, Div} from '@vkontakte/vkui'
 import UsernameComponent, {isValidUsername} from './UsernameComponent'
 import PasswordComponent, {isValidPassword} from './PasswordComponent'
 
@@ -11,7 +11,9 @@ export default (props) => {
         <>
             <UsernameComponent value={props.username} onChange={props.setUsername}/>
             <PasswordComponent value={props.password} onChange={props.setPassword}/>
-            <Button stretched size='l' disabled={disabled} onClick={props.onSubmit}>Войти</Button>
+            <Div>
+                <Button stretched size='l' disabled={disabled} onClick={props.onSubmit}>Войти</Button>
+            </Div>
         </>
     )
 }

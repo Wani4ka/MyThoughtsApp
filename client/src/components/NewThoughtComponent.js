@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Card, CardGrid, Group, ScreenSpinner, Title, WriteBar, WriteBarIcon} from '@vkontakte/vkui'
+import {Card, CardGrid, Group, ScreenSpinner, Spacing, Title, WriteBar, WriteBarIcon} from '@vkontakte/vkui'
 import {post} from 'axios'
 import errorMessage from '../errors'
 
@@ -24,6 +24,7 @@ export default (props) => {
     return (
         <Group>
             <Title level='2' style={{marginBottom:8,marginLeft:8}}>Здравствуйте, {props.user}!</Title>
+            <Spacing/>
             <CardGrid size='l'>
                 <Card mode='shadow'>
                     <WriteBar

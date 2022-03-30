@@ -89,10 +89,12 @@ export default (props) => {
                                 <Div>
                                     <Text weight='1'>{authMode === 'register' ? 'Уже есть аккаунт?' : 'Еще нет аккаунта?'}</Text>
                                 </Div>
-                                <Button stretched appearance='positive'
-                                        onClick={() => setAuthMode((mode) => mode === 'register' ? 'login' : 'register')}>
-                                    {authMode === 'register' ? 'Войти' : 'Зарегистрироваться'}
-                                </Button>
+                                <Div>
+                                    <Button stretched appearance='positive'
+                                            onClick={() => setAuthMode((mode) => mode === 'register' ? 'login' : 'register')}>
+                                        {authMode === 'register' ? 'Войти' : 'Зарегистрироваться'}
+                                    </Button>
+                                </Div>
                             </FormLayout>
                         </Group>
                         <FooterComponent/>
