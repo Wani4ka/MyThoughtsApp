@@ -31,7 +31,7 @@ export default (props) => {
     const logOut = () => {
         setPopout(() => <ScreenSpinner/>)
         post('/auth/logout').then(props.requestLogin).catch(err => {
-            setModalText(errorMessage(err.response.data))
+            setModalText(errorMessage(err.response))
             setActiveModal('error')
         }).finally(() => setPopout(undefined))
     }
@@ -70,7 +70,7 @@ export default (props) => {
                 props.logOut()
                 return
             }
-            setModalText(errorMessage(err.response.data))
+            setModalText(errorMessage(err.response))
             setActiveModal('error')
         }).finally(() => setPopout(undefined))
     }

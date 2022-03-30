@@ -16,7 +16,7 @@ export default (props) => {
         <FormItem
             top='Имя пользователя'
             status={isValidUsername(props.value) || !edited ? 'default' : 'error'}
-            bottom={!isValidUsername(props.value) && 'Имя пользователя должно иметь не меньше 3 символов, состоять из маленьких латинских букв, цифр и подчеркиваний'}
+            bottom={!isValidUsername(props.value) && 'Должно иметь не меньше 3 символов, состоять из маленьких латинских букв, цифр и подчеркиваний'}
         >
             <Input value={props.value} onChange={onChange} />
         </FormItem>

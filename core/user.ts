@@ -1,19 +1,14 @@
-import { User } from '@prisma/client'
-import { Request } from 'express'
-import { Session } from 'express-session'
+import {User} from '@prisma/client'
+import {Request} from 'express'
+import {Session} from 'express-session'
 import config from '../config'
-import { APIError } from './error'
+import {APIError} from './error'
 import models from './models'
 
-export async function getUserByName(username: any, createIfNotExists?: boolean) {
+export async function getUserByName(username: any) {
 	if (typeof username != 'string') throw new APIError('No username', 400, {code:1})
 	if (!username.match(config.usernameFormat)) throw new APIError('Bad username', 400, {code:2,username})
-	const userQuery = {name: username}
-	let user
-	if (createIfNotExists)
-		user = await models.user.upsert({ where: userQuery, update: {}, create: userQuery })
-	else user = await models.user.findFirst({ where: userQuery })
-	return user
+	return await models.user.findFirst({where: {name: username}})
 }
 
 export async function getUserById(id: number) {

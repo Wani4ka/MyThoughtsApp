@@ -19,7 +19,8 @@ model Thought {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  name    String   @unique
+  id       Int      @id @default(autoincrement())
+  password String
+  name     String   @unique
   thoughts   Thought[]
 }

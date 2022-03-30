@@ -16,7 +16,7 @@ export default (props) => {
                 props.logOut()
                 return
             }
-            props.setModalText(errorMessage(err.response.data))
+            props.setModalText(errorMessage(err.response))
             props.setActiveModal('error')
         }).finally(() => props.setPopout(undefined))
     }
