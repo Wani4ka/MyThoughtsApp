@@ -4,7 +4,7 @@ import {
     Group, ModalCard, ModalRoot,
     Panel,
     PanelHeader,
-    ScreenSpinner,
+    ScreenSpinner, Spacing,
     SplitCol,
     SplitLayout, useAdaptivity,
     View, ViewWidth,
@@ -66,7 +66,7 @@ export default (props) => {
                             <FormLayout onSubmit={logIn}>
                                 <FormStatus header='Добро пожаловать!' mode='default'>
                                     MyThoughts позволяет неограниченно делиться своими мыслями обо всем подряд, а также просматривать мысли, которыми поделились другие люди.
-                                    <br/><br/>
+                                    <Spacing/>
                                     Для продолжения необходимо выполнить вход.
                                 </FormStatus>
                                 <UsernameComponent value={username} onChange={setUsername}/>
