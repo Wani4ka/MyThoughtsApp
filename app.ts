@@ -10,8 +10,17 @@ import path from 'path'
 const app = express()
 app.use(express.json())
 
+const MySQLStore = require('express-mysql-session')(session)
+
 app.use(session({
 	secret: config.sessionSecret,
+	store: new MySQLStore({
+		host: config.db.host,
+		port: config.db.port,
+		user: config.db.user,
+		password: config.db.pass,
+		database: config.db.name
+	}),
 	saveUninitialized: false,
 	resave: true
 }))
