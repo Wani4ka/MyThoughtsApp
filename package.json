@@ -10,7 +10,7 @@
     "client:install": "npm install --prefix client",
     "client:build": "npm run build --prefix client",
     "dev": "cross-env NODE_ENV=development concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "db:push": "ts-node ./scripts/env.ts npx prisma db push --accept-data-loss"
+    "db:push": "ts-node ./scripts/env.ts && npx prisma db push --accept-data-loss"
   },
   "keywords": [
     "news",
