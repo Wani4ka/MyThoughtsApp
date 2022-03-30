@@ -13,6 +13,7 @@ import errorMessage from '../../errors'
 import {Icon56ErrorTriangleOutline} from '@vkontakte/icons'
 import RegisterFormComponent from './RegisterFormComponent'
 import LoginFormComponent from './LoginFormComponent'
+import FooterComponent from '../FooterComponent'
 
 export default (props) => {
     const [username, setUsername] = useState('')
@@ -88,9 +89,13 @@ export default (props) => {
                                 <Div>
                                     <Text weight='1'>{authMode === 'register' ? 'Уже есть аккаунт?' : 'Еще нет аккаунта?'}</Text>
                                 </Div>
-                                <Button stretched onClick={() => setAuthMode((mode) => mode === 'register' ? 'login' : 'register')} appearance='positive'>{authMode === 'register' ? 'Войти' : 'Зарегистрироваться'}</Button>
+                                <Button stretched appearance='positive'
+                                        onClick={() => setAuthMode((mode) => mode === 'register' ? 'login' : 'register')}>
+                                    {authMode === 'register' ? 'Войти' : 'Зарегистрироваться'}
+                                </Button>
                             </FormLayout>
                         </Group>
+                        <FooterComponent/>
                     </Panel>
                 </View>
             </SplitCol>

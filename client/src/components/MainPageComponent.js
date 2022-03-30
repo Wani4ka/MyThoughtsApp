@@ -17,6 +17,7 @@ import {get, post} from 'axios'
 import errorMessage from '../errors'
 import ThoughtComponent from './ThoughtComponent'
 import NewThoughtComponent from './NewThoughtComponent'
+import FooterComponent from './FooterComponent'
 
 export default (props) => {
     const [popout, setPopout] = useState()
@@ -59,6 +60,7 @@ export default (props) => {
         </ModalRoot>
     )
 
+    const superLogOut = props.logOut
     const refresh = () => {
         setPopout(() => <ScreenSpinner/>)
         get('/api/thoughts/get', { params: {page} }).then((res) => {
@@ -67,14 +69,14 @@ export default (props) => {
             setShown(true)
         }).catch(err => {
             if (err.response.status === 403) {
-                props.logOut()
+                superLogOut()
                 return
             }
             setModalText(errorMessage(err.response))
             setActiveModal('error')
         }).finally(() => setPopout(undefined))
     }
-    useEffect(refresh, [page])
+    useEffect(refresh, [page, superLogOut])
 
     return (
         <SplitLayout
@@ -109,7 +111,9 @@ export default (props) => {
                             header='Здесь еще нет мыслей'
                             icon={<Icon56ArticleOutline/>}
                         >Начните вести нашу общую историю, изложив свои мысли выше.</Placeholder>)}
-                    </>}</Panel>
+                    </>}
+                        <FooterComponent/>
+                    </Panel>
                 </View>
             </SplitCol>
             {viewWidth === ViewWidth.DESKTOP && (<SplitCol/>)}
