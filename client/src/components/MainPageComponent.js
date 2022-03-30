@@ -3,14 +3,14 @@ import {
     Button, ModalCard, ModalRoot, Pagination,
     Panel,
     PanelHeader,
-    PanelHeaderButton, ScreenSpinner, Spacing,
+    PanelHeaderButton, Placeholder, ScreenSpinner, Spacing,
     SplitCol,
     SplitLayout, useAdaptivity,
     View, ViewWidth,
 } from '@vkontakte/vkui'
 import {
     Icon28DoorArrowLeftOutline,
-    Icon56ArrowRightDoorOutline,
+    Icon56ArrowRightDoorOutline, Icon56ArticleOutline,
     Icon56ErrorTriangleOutline,
 } from '@vkontakte/icons'
 import {get, post} from 'axios'
@@ -97,14 +97,18 @@ export default (props) => {
                             setPage(1)
                             refresh()
                         }} setPopout={setPopout} setActiveModal={setActiveModal} setModalText={setModalText} logOut={logOut} />
-                        <Pagination
-                        currentPage={page}
-                        totalPages={totalPages}
-                        onChange={setPage}
-                        style={{display:'flex',justifyContent: 'center'}}
-                        />
+                        {totalPages > 1 && (<Pagination
+                            currentPage={page}
+                            totalPages={totalPages}
+                            onChange={setPage}
+                            style={{display:'flex',justifyContent: 'center'}}
+                        />)}
                         <Spacing size={16}/>
                         {thoughts.map((thought) => (<ThoughtComponent thought={thought} key={thought.id} />))}
+                        {thoughts.length === 0 && (<Placeholder
+                            header='Здесь еще нет мыслей'
+                            icon={<Icon56ArticleOutline/>}
+                        >Начните вести нашу общую историю, изложив свои мысли выше.</Placeholder>)}
                     </>}</Panel>
                 </View>
             </SplitCol>
