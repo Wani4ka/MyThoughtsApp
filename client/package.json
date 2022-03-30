@@ -23,7 +23,10 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "import/no-anonymous-default-export": "off"
+    }
   },
   "proxy": "http://localhost:5000",
   "browserslist": {
