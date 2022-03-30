@@ -1,0 +1,42 @@
+{
+  "name": "my-thoughts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.ts",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production ts-node app.ts",
+    "dev:server": "nodemon app.ts",
+    "dev:client": "npm run start --prefix client",
+    "client:install": "npm install --prefix client",
+    "client:build": "npm run build --prefix client",
+    "dev": "cross-env NODE_ENV=development concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "db:push": "ts-node ./scripts/env.ts npx prisma db push --accept-data-loss"
+  },
+  "keywords": [
+    "news",
+    "social",
+    "posts"
+  ],
+  "author": "Ivan Lutsenko <wani4ka@duck.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/config": "^0.0.41",
+    "@types/express": "^4.17.13",
+    "@types/express-session": "^1.17.4",
+    "@types/node": "^17.0.23",
+    "@types/passport": "^1.0.7",
+    "@types/passport-local": "^1.0.34",
+    "concurrently": "^7.0.0",
+    "nodemon": "^2.0.15",
+    "prisma": "^3.11.1",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.11.1",
+    "cross-env": "^7.0.3",
+    "express": "^4.17.3",
+    "express-async-handler": "^1.2.0",
+    "express-session": "^1.17.2"
+  }
+}
