@@ -1,34 +1,43 @@
-import React, {useState} from 'react'
+import {useNavigate, useSearchParams} from 'react-router-dom'
 import {
     Button,
-    Card,
-    CardGrid, Epic,
-    Group, IconButton, ModalCard, ModalRoot,
+    Epic, ModalCard, ModalRoot,
+    Pagination,
     Panel,
     PanelHeader,
+    Placeholder,
     ScreenSpinner,
-    SplitCol, SplitLayout, Textarea, useAdaptivity,
+    SplitCol,
+    SplitLayout, useAdaptivity,
     View, ViewWidth,
 } from '@vkontakte/vkui'
-import {post} from 'axios'
-import errorMessage from '../errors'
+import ThoughtComponent from './ThoughtComponent'
+import {Icon56ArrowRightDoorOutline, Icon56ArticleOutline, Icon56ErrorTriangleOutline} from '@vkontakte/icons'
 import FooterComponent from './FooterComponent'
-import {useNavigate} from 'react-router-dom'
+import React, {useEffect, useState} from 'react'
+import {get, post} from 'axios'
+import errorMessage from '../errors'
 import SidebarDesktopComponent from './SidebarDesktopComponent'
 import MobileTabbarComponent from './MobileTabbarComponent'
-import {Icon28Send, Icon56ArrowRightDoorOutline, Icon56ErrorTriangleOutline} from '@vkontakte/icons'
 
-export default ({ user }) => {
-    const navigate = useNavigate()
-    const [text, setText] = useState('')
+export default () => {
     const [popout, setPopout] = useState()
     const [modalText, setModalText] = useState()
     const [activeModal, setActiveModal] = useState('')
     const { viewWidth } = useAdaptivity()
     const isDesktop = viewWidth >= ViewWidth.TABLET
+    const navigate = useNavigate()
+    const [searchParams, setSearchParams] = useSearchParams()
+    const [totalPages, setTotalPages] = useState(1)
+    const [page, setPage] = useState(parseInt(searchParams.get('page') || '1') || 1)
+    const [thoughts, setThoughts] = useState([])
 
     const onStoryChange = ({currentTarget}) => navigate('/' + currentTarget.dataset.story)
     const requestLogin = () => navigate('/login')
+
+    useEffect(() => {
+        setPage(parseInt(searchParams.get('page') || '1') || 1)
+    }, [searchParams])
 
     const logOut = () => {
         setPopout(() => <ScreenSpinner/>)
@@ -38,20 +47,21 @@ export default ({ user }) => {
         }).finally(() => setPopout(undefined))
     }
 
-    const send = () => {
+    const refresh = () => {
         setPopout(() => <ScreenSpinner/>)
-        post('/api/thoughts/write', { content: text }).then(() => {
-            setText('')
-            navigate('/feed?page=1')
-        }).catch((err) => {
+        get('/api/thoughts/get', { params: {page} }).then((res) => {
+            setThoughts(res.data.thoughts)
+            setTotalPages(res.data.pages)
+        }).catch(err => {
             if (err.response.status === 403) {
                 navigate('/login')
                 return
             }
             setModalText(errorMessage(err.response))
             setActiveModal('error')
-        }).finally(() => setPopout(undefined))
+        }).finally(() => setPopout(() => undefined))
     }
+    useEffect(refresh, [page, navigate, setActiveModal, setModalText, setPopout])
 
     const modal = (
         <ModalRoot
@@ -76,6 +86,13 @@ export default ({ user }) => {
         </ModalRoot>
     )
 
+    const pagination = <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onChange={page => setSearchParams({ page })}
+        style={{display:'flex',justifyContent: 'center'}}
+    />
+
     return (
         <SplitLayout
             popout={popout}
@@ -84,7 +101,7 @@ export default ({ user }) => {
             header={isDesktop && <PanelHeader separator={false}/>}
         >
             {isDesktop && <SidebarDesktopComponent
-                activeStory='write'
+                activeStory='feed'
                 onStoryChange={onStoryChange}
                 onLogoutRequest={() => setActiveModal('logout-confirm')}
             />}
@@ -95,38 +112,24 @@ export default ({ user }) => {
                 maxWidth={isDesktop ? '560px' : '100%'}
             >
                 <Epic
-                    activeStory='write'
+                    activeStory='feed'
                     tabbar={
                         !isDesktop && (<MobileTabbarComponent
-                            activeStory='write'
+                            activeStory='feed'
                             onStoryChange={onStoryChange}
                             onLogoutRequest={() => setActiveModal('logout-confirm')}
                         />)
                     }
                 >
-                    <View activePanel='panel3.1' id='write'>
-                        <Panel id='panel3.1'>
-                            <PanelHeader>MyThoughts</PanelHeader>{user && (
-                            <Group>
-                                <CardGrid size='l'>
-                                    <Card mode='shadow'>
-                                        <SplitLayout>
-                                            <SplitCol>
-                                                <Textarea
-                                                    placeholder={`Что у ${user} на уме сегодня?`}
-                                                    onChange={({target}) => setText(target.value)}
-                                                >{text}
-                                                </Textarea>
-                                            </SplitCol>
-                                            <SplitCol fixed width={44} maxWidth={44}>
-                                                <IconButton aria-label='Отправить' onClick={send} disabled={text.length < 10 || text.length > 8192}>
-                                                    <Icon28Send style={{color:'rgb(0,140,255)'}}/>
-                                                </IconButton>
-                                            </SplitCol>
-                                        </SplitLayout>
-                                    </Card>
-                                </CardGrid>
-                            </Group>)}
+                    <View activePanel='panel2.1' id='feed'>
+                        <Panel id='panel2.1'>
+                            <PanelHeader>MyThoughts</PanelHeader>
+                            {thoughts.map((thought) => (<ThoughtComponent thought={thought} key={thought.id} />))}
+                            {thoughts.length === 0 && (<Placeholder
+                                header='Здесь еще нет мыслей'
+                                icon={<Icon56ArticleOutline/>}
+                            >Начните вести нашу общую историю, изложив свои мысли выше.</Placeholder>)}
+                            {totalPages > 1 && pagination}
                             <FooterComponent/>
                         </Panel>
                     </View>

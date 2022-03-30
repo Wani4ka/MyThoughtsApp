@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {
-    Button, Div, FormLayout, Group, ModalCard, ModalRoot,
+    Button, Div, FormLayout, FormStatus, Group, ModalCard, ModalRoot,
     Panel,
     PanelHeader,
     ScreenSpinner, Spacing,
@@ -11,18 +11,21 @@ import {
 import {post} from 'axios'
 import errorMessage from '../../errors'
 import {Icon56ErrorTriangleOutline} from '@vkontakte/icons'
-import RegisterFormComponent from './RegisterFormComponent'
-import LoginFormComponent from './LoginFormComponent'
 import FooterComponent from '../FooterComponent'
+import {useNavigate} from 'react-router-dom'
+import UsernameComponent, {isValidUsername} from './UsernameComponent'
+import PasswordComponent, {isValidPassword} from './PasswordComponent'
+import InviteComponent from './InviteComponent'
 
 export default (props) => {
+    const navigate = useNavigate()
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [invite, setInvite] = useState('')
+    const [disabled, setDisabled] = useState(true)
     const [popout, setPopout] = useState()
     const [activeModal, setActiveModal] = useState()
     const [loginError, setLoginError] = useState('')
-    const [authMode, setAuthMode] = useState('login')
     const { viewWidth } = useAdaptivity()
 
     const handleError = (err) => {
@@ -30,14 +33,8 @@ export default (props) => {
         setActiveModal('login-error')
     }
 
-    const logIn = async (e) => {
-        e.preventDefault()
-        setPopout(() => <ScreenSpinner/>)
-        post('/auth/login', { username, password })
-            .then(props.onLogin)
-            .catch(handleError)
-            .finally(() => setPopout(undefined))
-    }
+    useEffect(() => setDisabled(!(isValidUsername(username)
+        && isValidPassword(password) && invite !== '')), [username, password, invite])
 
     const register = async (e) => {
         e.preventDefault()
@@ -70,29 +67,28 @@ export default (props) => {
         >
             {viewWidth === ViewWidth.DESKTOP && (<SplitCol/>)}
             <SplitCol>
-                <View activePanel="panel1.1" id="login">
-                    <Panel id="panel1.1">
+                <View activePanel='panel1.1' id='register'>
+                    <Panel id='panel1.1'>
                         <PanelHeader>MyThoughts</PanelHeader>
                         <Group>
-                            <FormLayout onSubmit={authMode === 'register' ? register: logIn}>
-                                {authMode === 'register' ? (<RegisterFormComponent
-                                    username={username} setUsername={setUsername}
-                                    password={password} setPassword={setPassword}
-                                    invite={invite} setInvite={setInvite}
-                                    onSubmit={register} changeMode={() => setAuthMode('login')}
-                                />) : (<LoginFormComponent
-                                    username={username} setUsername={setUsername}
-                                    password={password} setPassword={setPassword}
-                                    onSubmit={logIn} changeMode={() => setAuthMode('register')}
-                                />)}
+                            <FormLayout onSubmit={register}>
+                                <FormStatus header='Добро пожаловать!'>
+                                    MyThoughts позволяет неограниченно делиться своими мыслями обо всем подряд, а также просматривать мысли, которыми поделились другие люди.
+                                </FormStatus>
+                                <UsernameComponent value={username} onChange={setUsername}/>
+                                <PasswordComponent value={password} onChange={setPassword}/>
+                                <InviteComponent value={invite} onChange={setInvite}/>
+                                <Div>
+                                    <Button stretched size='l' disabled={disabled} onClick={register}>Зарегистрироваться</Button>
+                                </Div>
                                 <Spacing separator='bottom'/>
                                 <Div>
-                                    <Text weight='1'>{authMode === 'register' ? 'Уже есть аккаунт?' : 'Еще нет аккаунта?'}</Text>
+                                    <Text weight='1'>Уже есть аккаунт?</Text>
                                 </Div>
                                 <Div>
                                     <Button stretched appearance='positive'
-                                            onClick={() => setAuthMode((mode) => mode === 'register' ? 'login' : 'register')}>
-                                        {authMode === 'register' ? 'Войти' : 'Зарегистрироваться'}
+                                            onClick={() => navigate('/login')}>
+                                        Войти
                                     </Button>
                                 </Div>
                             </FormLayout>

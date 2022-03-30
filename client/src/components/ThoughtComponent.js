@@ -13,7 +13,7 @@ export default (props) => {
                 >
                 </ContentCard>
             </CardGrid>
-            <Caption weight='regular' level='1' style={{marginTop:8,marginLeft:8}}>
+            <Caption weight='3' level='1' style={{marginTop:8,marginLeft:8}}>
                 {format.asString('dd.MM.yyyy hh:mm', new Date(props.thought.createdAt))}
             </Caption>
         </Group>

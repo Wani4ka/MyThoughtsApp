@@ -1,43 +1,23 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
-import {AdaptivityProvider, ConfigProvider, Root, AppRoot} from '@vkontakte/vkui'
 import '@vkontakte/vkui/dist/vkui.css'
-import LoginPageComponent from './components/login/AuthPageComponent'
-import {get} from 'axios'
-import MainPageComponent from './components/MainPageComponent'
-import LoadingScreenComponent from './components/LoadingScreenComponent'
-
-const App = () => {
-    const [activeView, setActiveView] = useState('loading')
-    const [user, setUser] = useState(false)
-
-    // show user log in dialog only if we can't access protected api
-    useEffect(() => {
-        get('/auth/whoami').then((res) => {
-            setUser(res.data.name)
-            setActiveView('main')
-        }).catch(() => setActiveView('login'))
-    }, [])
-
-    return (
-        <AppRoot>
-            <Root activeView={activeView}>
-                <LoadingScreenComponent id='loading'/>
-                <LoginPageComponent id='login' onLogin={(res) => {
-                    setUser(res.data.name)
-                    setActiveView('main')
-                }} />
-                <MainPageComponent id='main' user={user} requestLogin={() => setActiveView('login')} />
-            </Root>
-        </AppRoot>
-    );
-};
+import {BrowserRouter} from 'react-router-dom'
+import { Routes, Route} from "react-router-dom";
+import './style.css'
+import LoginRoute from './routes/LoginRoute'
+import RegisterRoute from './routes/RegisterRoute'
+import FeedRoute from './routes/FeedRoute'
+import WriteRoute from './routes/WriteRoute'
 
 ReactDOM.render(
-  <ConfigProvider>
-    <AdaptivityProvider>
-      <App />
-    </AdaptivityProvider>
-  </ConfigProvider>,
+    <BrowserRouter>
+        <Routes>
+            <Route path='/' element={<FeedRoute/>}/>
+            <Route path='/login' element={<LoginRoute/>}/>
+            <Route path='/register' element={<RegisterRoute/>}/>
+            <Route path='/feed' element={<FeedRoute/>}/>
+            <Route path='/write' element={<WriteRoute/>}/>
+        </Routes>
+    </BrowserRouter>,
   document.getElementById('root')
-);
+)
