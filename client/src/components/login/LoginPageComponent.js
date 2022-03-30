@@ -28,7 +28,8 @@ export default (props) => {
         setDisabled(!(isValidUsername(username) && invite !== ''))
     }, [username, invite])
 
-    const logIn = async () => {
+    const logIn = async (e) => {
+        e.preventDefault()
         setPopout(() => <ScreenSpinner/>)
         post('/auth/login', { username, invite }).then(props.onLogin).catch((err) => {
             setLoginError(errorMessage(err.response.data))
@@ -62,7 +63,7 @@ export default (props) => {
                     <Panel id="panel1.1">
                         <PanelHeader>MyThoughts</PanelHeader>
                         <Group>
-                            <FormLayout>
+                            <FormLayout onSubmit={logIn}>
                                 <FormStatus header='Добро пожаловать!' mode='default'>
                                     MyThoughts позволяет неограниченно делиться своими мыслями обо всем подряд, а также просматривать мысли, которыми поделились другие люди.
                                     <br/><br/>
