@@ -31,6 +31,7 @@ export default () => {
     const [totalPages, setTotalPages] = useState(1)
     const [page, setPage] = useState(parseInt(searchParams.get('page') || '1') || 1)
     const [thoughts, setThoughts] = useState([])
+    const [loaded, setLoaded] = useState(false)
 
     const onStoryChange = ({currentTarget}) => navigate('/' + currentTarget.dataset.story)
     const requestLogin = () => navigate('/login')
@@ -52,6 +53,7 @@ export default () => {
         get('/api/thoughts/get', { params: {page} }).then((res) => {
             setThoughts(res.data.thoughts)
             setTotalPages(res.data.pages)
+            setLoaded(true)
         }).catch(err => {
             if (err.response.status === 403) {
                 navigate('/login')
@@ -125,7 +127,7 @@ export default () => {
                         <Panel id='panel2.1'>
                             <PanelHeader>MyThoughts</PanelHeader>
                             {thoughts.map((thought) => (<ThoughtComponent thought={thought} key={thought.id} />))}
-                            {thoughts.length === 0 && (<Placeholder
+                            {loaded && thoughts.length === 0 && (<Placeholder
                                 header='Здесь еще нет мыслей'
                                 icon={<Icon56ArticleOutline/>}
                             >Начните вести нашу общую историю, изложив свои мысли выше.</Placeholder>)}
