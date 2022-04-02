@@ -1,8 +1,12 @@
 import {Tabbar, TabbarItem} from '@vkontakte/vkui'
 import {Icon28DoorArrowLeftOutline, Icon28NewsfeedOutline, Icon28WriteSquareOutline} from '@vkontakte/icons'
-import React from 'react'
+import React, {useContext} from 'react'
+import LogoutContext from '../context/LogoutContext'
+import ActiveStoryContext from '../context/ActiveStoryContext'
 
-export default ({activeStory, onStoryChange, onLogoutRequest }) => {
+export default () => {
+    const { logOut } = useContext(LogoutContext)
+    const { activeStory, onStoryChange } = useContext(ActiveStoryContext)
     return (<Tabbar>
         <TabbarItem
             onClick={onStoryChange}
@@ -21,7 +25,7 @@ export default ({activeStory, onStoryChange, onLogoutRequest }) => {
             <Icon28WriteSquareOutline />
         </TabbarItem>
         <TabbarItem
-            onClick={onLogoutRequest}
+            onClick={logOut}
             text='Выход'
         >
             <Icon28DoorArrowLeftOutline />

@@ -2,9 +2,10 @@ import React, {useEffect, useState} from 'react'
 import {AdaptivityProvider, AppRoot, ConfigProvider} from '@vkontakte/vkui'
 import {get} from 'axios'
 import {useNavigate} from 'react-router-dom'
-import NewThoughtComponent from '../components/NewThoughtComponent'
+import UserContext from '../context/UserContext'
+import MainPageComponent from '../components/MainPageComponent'
 
-export default () => {
+export default ({ story }) => {
     const navigate = useNavigate()
     const [ user, setUser ] = useState('')
 
@@ -16,10 +17,12 @@ export default () => {
     return (
         <ConfigProvider>
             <AdaptivityProvider>
-                <AppRoot>
-                    <NewThoughtComponent user={user} />
-                </AppRoot>
+                <UserContext.Provider value={user}>
+                    <AppRoot>
+                        <MainPageComponent story={story} />
+                    </AppRoot>
+                </UserContext.Provider>
             </AdaptivityProvider>
         </ConfigProvider>
-    );
+    )
 }

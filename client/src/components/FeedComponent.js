@@ -1,31 +1,22 @@
 import {useNavigate, useSearchParams} from 'react-router-dom'
 import {
-    Button,
-    Epic, ModalCard, ModalRoot,
     Pagination,
     Panel,
     PanelHeader,
     Placeholder,
     ScreenSpinner,
-    SplitCol,
-    SplitLayout, useAdaptivity,
-    View, ViewWidth,
+    View,
 } from '@vkontakte/vkui'
 import ThoughtComponent from './ThoughtComponent'
-import {Icon56ArrowRightDoorOutline, Icon56ArticleOutline, Icon56ErrorTriangleOutline} from '@vkontakte/icons'
+import {Icon56ArticleOutline} from '@vkontakte/icons'
 import FooterComponent from './FooterComponent'
-import React, {useEffect, useState} from 'react'
-import {get, post} from 'axios'
+import React, {useContext, useEffect, useState} from 'react'
+import {get} from 'axios'
 import errorMessage from '../errors'
-import SidebarDesktopComponent from './SidebarDesktopComponent'
-import MobileTabbarComponent from './MobileTabbarComponent'
+import OverlayContext from '../context/OverlayContext'
 
 export default () => {
-    const [popout, setPopout] = useState()
-    const [modalText, setModalText] = useState()
-    const [activeModal, setActiveModal] = useState('')
-    const { viewWidth } = useAdaptivity()
-    const isDesktop = viewWidth >= ViewWidth.TABLET
+    const overlay = useContext(OverlayContext)
     const navigate = useNavigate()
     const [searchParams, setSearchParams] = useSearchParams()
     const [totalPages, setTotalPages] = useState(1)
@@ -33,23 +24,12 @@ export default () => {
     const [thoughts, setThoughts] = useState([])
     const [loaded, setLoaded] = useState(false)
 
-    const onStoryChange = ({currentTarget}) => navigate('/' + currentTarget.dataset.story)
-    const requestLogin = () => navigate('/login')
-
     useEffect(() => {
         setPage(parseInt(searchParams.get('page') || '1') || 1)
     }, [searchParams])
 
-    const logOut = () => {
-        setPopout(() => <ScreenSpinner/>)
-        post('/auth/logout').then(requestLogin).catch(err => {
-            setModalText(errorMessage(err.response))
-            setActiveModal('error')
-        }).finally(() => setPopout(undefined))
-    }
-
     const refresh = () => {
-        setPopout(() => <ScreenSpinner/>)
+        overlay.setPopout(() => <ScreenSpinner/>)
         get('/api/thoughts/get', { params: {page} }).then((res) => {
             setThoughts(res.data.thoughts)
             setTotalPages(res.data.pages)
@@ -59,34 +39,11 @@ export default () => {
                 navigate('/login')
                 return
             }
-            setModalText(errorMessage(err.response))
-            setActiveModal('error')
-        }).finally(() => setPopout(() => undefined))
+            overlay.setModalText(errorMessage(err.response))
+            overlay.setActiveModal('error')
+        }).finally(() => overlay.setPopout(() => undefined))
     }
-    useEffect(refresh, [page, navigate, setActiveModal, setModalText, setPopout])
-
-    const modal = (
-        <ModalRoot
-            activeModal={activeModal}
-            onClose={() => setActiveModal(undefined)}
-        >
-            <ModalCard
-                id='error'
-                header='Ошибка'
-                icon={<Icon56ErrorTriangleOutline style={{color:'rgb(255,0,0)'}} />}
-                subheader={modalText}
-            />
-            <ModalCard
-                id='logout-confirm'
-                header='Вы уверены?'
-                icon={<Icon56ArrowRightDoorOutline/>}
-                subheader='Вы собираетесь выйти из аккаунта. Вы точно хотите это сделать?'
-                actions={
-                    <Button size='l' mode='primary' aria-label='Выйти' stretched onClick={logOut}>Выйти</Button>
-                }
-            />
-        </ModalRoot>
-    )
+    useEffect(refresh, [page, navigate, overlay.setActiveModal, overlay.setModalText, overlay.setPopout])
 
     const pagination = <Pagination
         currentPage={page}
@@ -96,47 +53,17 @@ export default () => {
     />
 
     return (
-        <SplitLayout
-            popout={popout}
-            modal={modal}
-            style={{justifyContent: 'center'}}
-            header={isDesktop && <PanelHeader separator={false}/>}
-        >
-            {isDesktop && <SidebarDesktopComponent
-                activeStory='feed'
-                onStoryChange={onStoryChange}
-                onLogoutRequest={() => setActiveModal('logout-confirm')}
-            />}
-            <SplitCol
-                animate={!isDesktop}
-                spaced={isDesktop}
-                width={isDesktop ? '560px' : '100%'}
-                maxWidth={isDesktop ? '560px' : '100%'}
-            >
-                <Epic
-                    activeStory='feed'
-                    tabbar={
-                        !isDesktop && (<MobileTabbarComponent
-                            activeStory='feed'
-                            onStoryChange={onStoryChange}
-                            onLogoutRequest={() => setActiveModal('logout-confirm')}
-                        />)
-                    }
-                >
-                    <View activePanel='panel2.1' id='feed'>
-                        <Panel id='panel2.1'>
-                            <PanelHeader>MyThoughts</PanelHeader>
-                            {thoughts.map((thought) => (<ThoughtComponent thought={thought} key={thought.id} />))}
-                            {loaded && thoughts.length === 0 && (<Placeholder
-                                header='Здесь еще нет мыслей'
-                                icon={<Icon56ArticleOutline/>}
-                            >Начните вести нашу общую историю, изложив свои мысли выше.</Placeholder>)}
-                            {totalPages > 1 && pagination}
-                            <FooterComponent/>
-                        </Panel>
-                    </View>
-                </Epic>
-            </SplitCol>
-        </SplitLayout>
+        <View activePanel='panel2.1' id='feed'>
+            <Panel id='panel2.1'>
+                <PanelHeader>MyThoughts</PanelHeader>
+                {thoughts.map((thought) => (<ThoughtComponent thought={thought} key={thought.id} />))}
+                {loaded && thoughts.length === 0 && (<Placeholder
+                    header='Здесь еще нет мыслей'
+                    icon={<Icon56ArticleOutline/>}
+                >Начните вести нашу общую историю, изложив свои мысли выше.</Placeholder>)}
+                {totalPages > 1 && pagination}
+                <FooterComponent/>
+            </Panel>
+        </View>
     )
 }

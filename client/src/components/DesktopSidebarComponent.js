@@ -1,13 +1,17 @@
 import {Cell, Group, Panel, PanelHeader, SplitCol} from '@vkontakte/vkui'
 import {Icon28DoorArrowLeftOutline, Icon28NewsfeedOutline, Icon28WriteSquareOutline} from '@vkontakte/icons'
-import React from 'react'
+import React, {useContext} from 'react'
+import LogoutContext from '../context/LogoutContext'
+import ActiveStoryContext from '../context/ActiveStoryContext'
 
 const cellSelectedStyle = {
     backgroundColor: 'var(--button_secondary_background)',
     borderRadius: 8,
 }
 
-export default ({ activeStory, onStoryChange, onLogoutRequest }) => {
+export default () => {
+    const { logOut } = useContext(LogoutContext)
+    const { activeStory, onStoryChange } = useContext(ActiveStoryContext)
     return (
         <SplitCol fixed width={280} maxWidth={280}>
             <Panel>
@@ -31,7 +35,7 @@ export default ({ activeStory, onStoryChange, onLogoutRequest }) => {
                     </Group>
                     <Group mode='plain'>
                         <Cell
-                            onClick={onLogoutRequest}
+                            onClick={logOut}
                             before={<Icon28DoorArrowLeftOutline />}
                         >Выход</Cell>
                     </Group>
