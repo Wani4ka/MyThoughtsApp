@@ -1,26 +1,19 @@
 import express from 'express'
 import config from './config'
 import { apiErrorHandler } from './core/error'
-import session from 'express-session'
-
 import auth from './routes/auth.routes'
 import thoughts from './routes/thoughts.routes'
 import path from 'path'
 
+import session from 'express-session'
+import session_file_store from 'session-file-store'
+const FileStore = session_file_store(session)
+
 const app = express()
 app.use(express.json())
-
-const MySQLStore = require('express-mysql-session')(session)
-
 app.use(session({
 	secret: config.sessionSecret,
-	store: new MySQLStore({
-		host: config.db.host,
-		port: config.db.port,
-		user: config.db.user,
-		password: config.db.pass,
-		database: config.db.name
-	}),
+	store: new FileStore({ logFn: () => {} }),
 	saveUninitialized: false,
 	resave: true
 }))

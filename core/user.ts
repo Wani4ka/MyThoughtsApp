@@ -1,4 +1,4 @@
-import {User} from '@prisma/client'
+import { User } from '@prisma/client'
 import {Request} from 'express'
 import {Session} from 'express-session'
 import config from '../config'
@@ -16,18 +16,21 @@ export async function getUserById(id: number) {
 }
 
 export type AuthedRequest = Request & {
+	user?: User,
 	session: Session & {
-		user?: User
+		userID?: number
 	}
 }
 
 export async function authUser(req: AuthedRequest, _res: any, next: (err?: any) => void) {
 	try {
-		if (!req.session.user) throw new APIError('Unauthorized', 403, {code: 7})
-		if (!(await getUserById(req.session.user.id))) {
+		if (!req.session.userID) throw new APIError('Unauthorized', 403, {code: 7})
+		const user = await getUserById(req.session.userID)
+		if (!user) {
 			req.session.destroy(() => {})
 			throw new APIError('User deleted', 403, {code: 8})
 		}
+		req.user = user
 		next()
 	} catch (err) { next(err) }
 }

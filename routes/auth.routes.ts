@@ -9,7 +9,7 @@ import models from '../core/models'
 const router = Router()
 
 router.get('/whoami', authUser, (req: AuthedRequest, res) => {
-    const user = req.session.user
+    const user = req.user
     res.json({ id: user!.id, name: user!.name })
 })
 
@@ -27,7 +27,7 @@ router.post('/register', async (req: AuthedRequest, res, next) => {
         const data = { name: username, password: hashedPwd }
         const user = await models.user.create({data})
 
-        req.session.user = user
+        req.session.userID = user.id
         res.json({ id: user.id, name: user.name })
 
     } catch(err) { next(err) }
@@ -45,7 +45,7 @@ router.post('/login', async (req: AuthedRequest, res, next) => {
         if (!isMatch)
             throw new APIError('Wrong password', 403, { code: 14 })
 
-        req.session.user = user
+        req.session.userID = user.id
         res.json({ id: user.id, name: user.name })
     } catch(err) { next(err) }
 })

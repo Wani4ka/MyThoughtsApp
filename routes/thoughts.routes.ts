@@ -39,7 +39,7 @@ router.post('/write', authUser, async (req: AuthedRequest, res, next) => {
         const thought = await models.thought.create({
             data: {
                 author: {
-                    connect: {id: req.session.user!.id},
+                    connect: {id: req.session.userID},
                 },
                 content: content,
             },
