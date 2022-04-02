@@ -10,7 +10,7 @@ const cellSelectedStyle = {
 }
 
 export default () => {
-    const { logOut } = useContext(LogoutContext)
+    const logOut = useContext(LogoutContext)
     const { activeStory, onStoryChange } = useContext(ActiveStoryContext)
     return (
         <SplitCol fixed width={280} maxWidth={280}>

@@ -5,7 +5,7 @@ import LogoutContext from '../context/LogoutContext'
 import ActiveStoryContext from '../context/ActiveStoryContext'
 
 export default () => {
-    const { logOut } = useContext(LogoutContext)
+    const logOut = useContext(LogoutContext)
     const { activeStory, onStoryChange } = useContext(ActiveStoryContext)
     return (<Tabbar>
         <TabbarItem
